@@ -1,5 +1,18 @@
 <?php
-include_once('includes/header.inc.php');
+    include_once('includes/header.inc.php');
+
+    session_start();
+
+    if(empty($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
+        header("location: login.php");
+        exit;
+    }
+    if (isset($_SESSION["isAdmin"]) && $_SESSION["isAdmin"] === true){
+        header("location: index.php");
+        exit;
+    }
+
+    require_once("connection.php");
 ?>
 
         <!-- Begin Page Content -->
