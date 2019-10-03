@@ -10,5 +10,4 @@ catch(PDOException $e) {
     // Print PDOException message
     die("Erreur: " . $e->getMessage());
 }
-
 ?>
