@@ -43,7 +43,7 @@
             $id_login = 0;
             foreach ($tabUsers as $user) {
                 if ($user['login'] == $login) {
-                    $hashed_password = password_hash($user['password'], PASSWORD_DEFAULT);
+                    $hashed_password = $user['password'];
                     $userExist = 1;
                     $userValid = $user['valide'];
                     $role = strtolower($user['nom_role']);
@@ -81,8 +81,7 @@
             } else {
                 $login_err = "Pas de compte trouvé avec ce user ";
             }
-
-
+            
             // Fermeture du statement
             unset($stmt);
         }
