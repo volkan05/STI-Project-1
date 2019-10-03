@@ -5,6 +5,7 @@
 -- database file: /usr/share/nginx/databases/database.sqlite
 --
 -- Autheurs: Benoit Julien, Sutcu Volkan
+--
 ----
 BEGIN TRANSACTION;
 
