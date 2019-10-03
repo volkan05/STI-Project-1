@@ -3,7 +3,7 @@
 
     session_start();
 
-    if(empty($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
+    if(empty($_SESSION["loggedin"]) && $_SESSION["loggedin"] === false){
         header("location: login.php");
         exit;
     }
@@ -13,6 +13,14 @@
     }
 
     require_once("connection.php");
+
+    $strSQLRequest = "SELECT id_login, login, valide, nom_role FROM Utilisateur
+            INNER JOIN Role ON Utilisateur.id_role = Role.id_role
+            ORDER BY login";
+    $stmt = $pdo->query($strSQLRequest);
+    $tabUsers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $stmt->closeCursor();
+
 ?>
 
         <!-- Begin Page Content -->
@@ -29,7 +37,7 @@
                   <thead>
                     <tr>
                         <th>Login</th>
-                        <th>Validité</th>
+                        <th>Activé</th>
                         <th>Rôle</th>
                         <th>Modification</th>
                         <th>Suppression</th>
@@ -38,20 +46,29 @@
                   <tfoot>
                     <tr>
                         <th>Login</th>
-                        <th>Validité</th>
+                        <th>Activé</th>
                         <th>Rôle</th>
                         <th>Modification</th>
                         <th>Suppression</th>
                     </tr>
                   </tfoot>
                   <tbody>
-                    <tr>
-                        <td>Tiger Nixon</td>
-                        <td>System Architect</td>
-                        <td>Edinburgh</td>
-                        <td>61</td>
-                        <td>61</td>
-                    </tr>
+                    <?php
+                    foreach ($tabUsers as $user)
+                    {
+                        echo "<tr>";
+                        echo "<td>".$user["login"]."</td>";
+                        if ($user["valide"] == "1"){
+                            echo "<td>oui</td>";
+                        } else {
+                            echo "<td>non</td>";
+                        }
+                        echo "<td>".$user["nom_role"]."</td>";
+                        echo "<td><a class='dropdown-item' href='admin-addUser.php?edit_id_login=".$user["id_login"]."'>modifier</a></td>";
+                        echo "<td><a class='dropdown-item' href='deleteUser.php?delete_id_login=". $user["id_login"]."'>supprimer</a></td>";
+                        echo "</tr>";
+                    }
+                    ?>
                   </tbody>
                 </table>
               </div>
@@ -60,6 +77,7 @@
 
         </div>
         <!-- /.container-fluid -->
+
 
       </div>
       <!-- End of Main Content -->

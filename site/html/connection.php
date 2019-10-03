@@ -1,5 +1,5 @@
 <?php
-$conn = null;
+$pdo = null;
 try{
     // Create (connect to) SQLite database in file
     $pdo = new PDO('sqlite:/usr/share/nginx/databases/database.sqlite');
