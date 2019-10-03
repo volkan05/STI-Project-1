@@ -1,6 +1,8 @@
 <?php
+
     session_start();
 
+    // Vérifie si le user est déjà co
     if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
         header("location: index.php");
         exit;
@@ -8,75 +10,86 @@
 
     require_once "connection.php";
 
-    $username = $password = "";
-    $username_err = $password_err = "";
+    $login = $password = "";
+    $login_err = $password_err = "";
 
+    // Traite le formulaire
     if($_SERVER["REQUEST_METHOD"] == "POST"){
+        // Vérifie le champ user
+        if(empty(trim($_POST["login"]))){
+            $login_err = "Entrez le login";
+        } else{
+            $login = trim($_POST["login"]);
+        }
+        // Vérifie le champ mot de passe
+        if(empty(trim($_POST["password"]))){
+            $password_err = "Entrez votre mot de passe";
+        } else{
+            $password = trim($_POST["password"]);
+        }
 
-    if(empty(trim($_POST["username"]))){
-        $username_err = "Entrez le username";
-    } else{
-        $username = trim($_POST["username"]);
-    }
+        // S'il n'y a pas d'erreur, on se connecte à la base de données
+        if(empty($login_err) && empty($password_err)) {
+            // Va récupérer le user de la bdd
+            $sql = "SELECT id_login, login, password, valide, nom_role FROM Utilisateur 
+                    INNER JOIN Role ON Utilisateur.id_role = Role.id_role";
 
-    if(empty(trim($_POST["password"]))){
-        $password_err = "Entrez votre mot de passe";
-    } else{
-        $password = trim($_POST["password"]);
-    }
+            $stmt = $pdo->query($sql);
+            $tabUsers = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    if(empty($username_err) && empty($password_err)){
-    // Prepare a select statement
-    $sql = "SELECT id_login, login, password, valide, nom_role FROM Utilisateur WHERE login = :username 
-            INNER JOIN Role ON Utilisateur.id_role = Role.id_role";
+            $userExist = 0;
+            $userValid = 0;
+            $role = 0;
+            $id_login = 0;
+            foreach ($tabUsers as $user) {
+                if ($user['login'] == $login) {
+                    $hashed_password = password_hash($user['password'], PASSWORD_DEFAULT);
+                    $userExist = 1;
+                    $userValid = $user['valide'];
+                    $role = strtolower($user['nom_role']);
+                    $id_login = $user['id_login'];
+                    break;
+                }
+            }
 
-    if($stmt = $pdo->prepare($sql)){
-    // Bind variables to the prepared statement as parameters
-    $stmt->bindParam(":username", $param_username, PDO::PARAM_STR);
-
-        // Set parameters
-        $param_username = trim($_POST["username"]);
-
-        // Attempt to execute the prepared statement
-        if($stmt->execute()){
-            // Check if username exists, if yes then verify password
-            if($stmt->rowCount() == 1){
-                if($row = $stmt->fetch()){
-                    $id = $row["id"];
-                    $username = $row["username"];
-                    $hashed_password = $row["password"];
-                    if(password_verify($password, $hashed_password)){
+            if ($userExist) {
+                if(password_verify($password, $hashed_password)){
+                    if($userValid){
                         // Password is correct, so start a new session
                         session_start();
 
                         // Store data in session variables
                         $_SESSION["loggedin"] = true;
-                        $_SESSION["id"] = $id;
-                        $_SESSION["username"] = $username;
+                        $_SESSION["isAdmin"] = 0;
+                        if(strpos($role, 'admin') === 0) {
+                            $_SESSION["isAdmin"] = 1;
+                        }
+                        $_SESSION["id"] = $id_login;
+                        $_SESSION["login"] = $login;
 
                         // Redirect user to welcome page
-                        header("location: welcome.php");
-                    } else{
-                        // Display an error message if password is not valid
-                        $password_err = "The password you entered was not valid.";
+                        header("location: login.php");
                     }
+                    else{
+                        echo "Compte non-valide !";
+                    }
+                } else{
+                    // Display an error message if password is not valid
+                    $password_err = "Le mot de passe entré n'est pas valide";
                 }
-            } else{
-                // Display an error message if username doesn't exist
-                $username_err = "No account found with that username.";
+
+            } else {
+                $login_err = "Pas de compte trouvé avec ce user ";
             }
-        } else{
-            echo "Oops! Something went wrong. Please try again later.";
+
+
+            // Fermeture du statement
+            unset($stmt);
         }
-    }
-
-        // Close statement
-        unset($stmt);
-    }
-
-        // Close connection
+        // Fermeture de connection
         unset($pdo);
-    }
+        }
+
 ?>
 
 <!DOCTYPE html>
@@ -120,18 +133,20 @@
                   <div class="text-center">
                     <h1 class="h4 text-gray-900 mb-4">Veuillez vous connecter</h1>
                   </div>
-                    <form class="user" action="index.php" method="post">
-                        <div class="form-group <?php echo (!empty($username_err)) ? 'has-error' : ''; ?>">
-                            <input type="text" name="username" class="form-control form-control-user" id="exampleInputLogin" aria-describedby="emailHelp" placeholder="login..." value="<?php echo $username; ?>">
-                            <span class="help-block"><?php echo $username_err; ?></span>
-                        </div>
-                        <div class="form-group <?php echo (!empty($password_err)) ? 'has-error' : ''; ?>">
-                            <input type="password" name="password" class="form-control form-control-user" id="exampleInputPassword" placeholder="mot de passe..." value="<?php echo $password; ?>">
-                            <span class="help-block"><?php echo $password_err; ?></span>
-                        </div>
-                        <div class="form-group">
-                            <input type="submit" class="btn btn-primary" value="Connexion">
-                        </div>
+                    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">                        <div class="form-group <?php echo (!empty($login_err)) ? 'has-error' : ''; ?>">
+                            <div class="form-group <?php echo (!empty($login_err)) ? 'has-error' : ''; ?>">
+                                <label>login</label>
+                                <input type="text" name="login" class="form-control" value="<?php echo $login; ?>">
+                                <span class="help-block"><?php echo $login_err; ?></span>
+                            </div>
+                            <div class="form-group <?php echo (!empty($password_err)) ? 'has-error' : ''; ?>">
+                                <label>Password</label>
+                                <input type="password" name="password" class="form-control">
+                                <span class="help-block"><?php echo $password_err; ?></span>
+                            </div>
+                            <div class="form-group">
+                                <input type="submit" class="btn btn-primary" value="Login">
+                            </div>
                   </form>
                   <hr>
                 </div>
