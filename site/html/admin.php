@@ -4,11 +4,14 @@
     session_start();
 
     if(empty($_SESSION["loggedin"]) && $_SESSION["loggedin"] === false){
-        header("location: login.php");
+        header("Location: login.php");
         exit;
     }
-    if (isset($_SESSION["isAdmin"]) && $_SESSION["isAdmin"] === true){
-        header("location: index.php");
+    if (isset($_SESSION["isNotAdmin"]) && $_SESSION["isNotAdmin"] === 1){
+        //echo "hello !";
+        header('Location: index.php');
+        //echo " <meta http-equiv='Location' content='index.php'>";
+        //echo "salut !";
         exit;
     }
 
@@ -65,7 +68,7 @@
                         }
                         echo "<td>".$user["nom_role"]."</td>";
                         echo "<td><a class='dropdown-item' href='admin-addUser.php?edit_id_login=".$user["id_login"]."'>modifier</a></td>";
-                        echo "<td><a class='dropdown-item' href='deleteUser.php?delete_id_login=". $user["id_login"]."'>supprimer</a></td>";
+                        echo "<td><a class='dropdown-item' href='admin-deleteUser.php?delete_id_login=". $user["id_login"]."'>supprimer</a></td>";
                         echo "</tr>";
                     }
                     ?>

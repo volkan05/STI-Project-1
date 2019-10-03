@@ -5,7 +5,7 @@ if(empty($_SESSION["loggedin"]) && $_SESSION["loggedin"] === false){
     header("location: login.php");
     exit;
 }
-if (isset($_SESSION["isAdmin"]) && $_SESSION["isAdmin"] === true){
+if (isset($_SESSION["isNotAdmin"]) && $_SESSION["isNotAdmin"] === 1){
     header("location: index.php");
     exit;
 }
