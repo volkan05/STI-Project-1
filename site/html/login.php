@@ -60,9 +60,9 @@
 
                         // Store data in session variables
                         $_SESSION["loggedin"] = true;
-                        $_SESSION["isAdmin"] = 0;
+                        $_SESSION["isNotAdmin"] = 1;
                         if(strpos($role, 'admin') === 0) {
-                            $_SESSION["isAdmin"] = 1;
+                            $_SESSION["isNotAdmin"] = 0;
                         }
                         $_SESSION["id"] = $id_login;
                         $_SESSION["login"] = $login;
