@@ -7,18 +7,6 @@
         exit;
     }
 
-    require_once "connection.php";
-
-    $sql = "SELECT Message.date, Utilisateur.login, Message.sujet FROM Message INNER JOIN Utilisateur
-            ON Message.expediteur = Utilisateur.id_login WHERE " . " Message.recepteur = " . $_SESSION["id"] .
-            " ORDER BY Message.date ASC";
-
-    $stmt = $pdo->query($sql);
-    $tabMessages = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // -------------------- Message details --------------------
-
-
     include_once('includes/header.inc.php');
 ?>
         <!-- Begin Page Content -->
@@ -42,16 +30,27 @@
                     <th>Plus d'informations</th>
                   </tr>
                   </thead>
+                  <tfoot>
+                  <tr>
+                      <th>Date de réception</th>
+                      <th>Expéditeur</th>
+                      <th>Sujet</th>
+                      <th>Réponse</th>
+                      <th>Suppression</th>
+                      <th>Plus d'informations</th>
+                  </tr>
+                  </tfoot>
                   <tbody>
-                  <?php
-                      foreach($tabMessages as $mess){
-                          echo "<tr><td>" . $mess['date'] . "</td><td>"
-                              . $mess['login'] . "</td><td>" . $mess['sujet'] . "</td>
-                              <td><a href='sendMessage.php'>répondre</a></td>
-                              <td><a href='deleteMail.php'>supprimer</a></td>
-                              <td><a href='detailsMail.php'>détails</a></td></tr>";
-                      }
-                    ?>
+                  <!--
+                      <tr>
+                        <td>Tiger Nixon</td>
+                        <td>System Architect</td>
+                        <td>Edinburgh</td>
+                        <td>61</td>
+                        <td>2011/04/25</td>
+                        <td>$320,800</td>
+                      </tr>
+                      -->
                   </tbody>
                 </table>
               </div>

@@ -65,24 +65,28 @@
 
         <!-- Divider -->
         <hr class="sidebar-divider d-none d-md-block">
-
-        <!-- Nav Item - Tables -->
-        <li class="nav-item">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-                <i class="fas fa-fw fa-table"></i>
-                <span>Comptes utilisateurs</span>
-            </a>
-            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                <div class="bg-white py-2 collapse-inner rounded">
-                    <h6 class="collapse-header">Service de messagerie :</h6>
-                    <a class="collapse-item" href="admin.php"><i class="fas fa-fw fa-envelope-open"></i><span> Gestion</span></a>
-                    <a class="collapse-item" href="admin-addUser.php"><i class="fas fa-fw fa-envelope-open-text"></i><span> Ajout d'utilisateur</span></a>
-                </div>
-            </div>
-        </li>
-
-        <!-- Divider -->
-        <hr class="sidebar-divider d-none d-md-block">
+        
+        <?php
+            if (isset($_SESSION["isNotAdmin"]) && $_SESSION["isNotAdmin"] === 0){
+                echo '<!-- Nav Item - Tables -->
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                            <i class="fas fa-fw fa-table"></i>
+                            <span>Comptes utilisateurs</span>
+                        </a>
+                        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                            <div class="bg-white py-2 collapse-inner rounded">
+                                <h6 class="collapse-header">Service de messagerie :</h6>
+                                <a class="collapse-item" href="admin.php"><i class="fas fa-fw fa-envelope-open"></i><span> Gestion</span></a>
+                                <a class="collapse-item" href="admin-addUser.php"><i class="fas fa-fw fa-envelope-open-text"></i><span> Ajout d\'utilisateur</span></a>
+                            </div>
+                        </div>
+                    </li>
+            
+                    <!-- Divider -->
+                    <hr class="sidebar-divider d-none d-md-block">';
+            }
+        ?>
 
         <!-- Sidebar Toggler (Sidebar) -->
         <div class="text-center d-none d-md-inline">
@@ -119,7 +123,7 @@
                     <!-- Nav Item - User Information -->
                     <li class="nav-item dropdown no-arrow">
                         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="mr-2 d-none d-lg-inline text-gray-600 small">LE NOM </span>
+                            <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo $_SESSION['login'];?> </span>
                             <img class="img-profile rounded-circle" src="img/undraw_profile_pic.svg">
                         </a>
                         <!-- Dropdown - User Information -->
