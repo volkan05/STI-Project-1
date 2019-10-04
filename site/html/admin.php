@@ -1,6 +1,4 @@
 <?php
-    include_once('includes/header.inc.php');
-
     session_start();
 
     if(empty($_SESSION["loggedin"]) && $_SESSION["loggedin"] === false){
@@ -8,13 +6,11 @@
         exit;
     }
     if (isset($_SESSION["isNotAdmin"]) && $_SESSION["isNotAdmin"] === 1){
-        //echo "hello !";
         header('Location: index.php');
-        //echo " <meta http-equiv='Location' content='index.php'>";
-        //echo "salut !";
         exit;
     }
 
+    include_once('includes/header.inc.php');
     require_once("connection.php");
 
     $strSQLRequest = "SELECT id_login, login, valide, nom_role FROM Utilisateur

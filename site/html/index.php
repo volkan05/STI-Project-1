@@ -7,6 +7,7 @@
         exit;
     }
 
+
     require_once "connection.php";
 
     $sql = "SELECT Message.id_Message, Message.date, Utilisateur.login, Message.sujet FROM Message INNER JOIN Utilisateur
@@ -40,6 +41,16 @@
                     <th>Plus d'informations</th>
                   </tr>
                   </thead>
+                  <tfoot>
+                  <tr>
+                      <th>Date de réception</th>
+                      <th>Expéditeur</th>
+                      <th>Sujet</th>
+                      <th>Réponse</th>
+                      <th>Suppression</th>
+                      <th>Plus d'informations</th>
+                  </tr>
+                  </tfoot>
                   <tbody>
                   <?php
                       foreach($tabMessages as $mess){
