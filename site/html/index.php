@@ -9,14 +9,12 @@
 
     require_once "connection.php";
 
-    $sql = "SELECT Message.date, Utilisateur.login, Message.sujet FROM Message INNER JOIN Utilisateur
-            ON Message.expediteur = Utilisateur.id_login WHERE " . " Message.recepteur = " . $_SESSION["id"] .
+    $sql = "SELECT Message.id_Message, Message.date, Utilisateur.login, Message.sujet FROM Message INNER JOIN Utilisateur
+            ON Message.expediteur = Utilisateur.id_login WHERE Message.recepteur = " . $_SESSION["id"] .
             " ORDER BY Message.date ASC";
 
     $stmt = $pdo->query($sql);
     $tabMessages = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // -------------------- Message details --------------------
 
 
     include_once('includes/header.inc.php');
@@ -47,9 +45,9 @@
                       foreach($tabMessages as $mess){
                           echo "<tr><td>" . $mess['date'] . "</td><td>"
                               . $mess['login'] . "</td><td>" . $mess['sujet'] . "</td>
-                              <td><a href='sendMessage.php'>répondre</a></td>
+                              <td><a href='sendMail.php'>répondre</a></td>
                               <td><a href='deleteMail.php'>supprimer</a></td>
-                              <td><a href='detailsMail.php'>détails</a></td></tr>";
+                              <td><a href='details.php?id=" . $mess['id_Message'] . "'>détails</a></td></tr>";
                       }
                     ?>
                   </tbody>
